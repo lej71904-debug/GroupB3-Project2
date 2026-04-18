@@ -17,7 +17,7 @@
 ## Data quality assessment: identify and explain the main data quality issues in the source file.
 The source data consists of two sheets exported from Northline Outfitters' Excel-based operations: Sales_Dump (200 rows, 21 columns) and Product_Supplier_Master (60 rows, 16 columns). Both sheets contain significant quality issues that prevent them from being used directly in a relational database.
 
-**Issue 1 – Inconsistent Date Formats (Sales_Dump.sale_date)**
+### **Issue 1 – Inconsistent Date Formats (Sales_Dump.sale_date)**
 
 The sale_date column contains at least seven distinct date formats mixed across rows. Examples found in the data:
 Raw ValueFormat10-11-2025MM-DD-YYYY (U.S. style)31/10/2025DD/MM/YYYY (Canadian/European style)Oct 17 25Abbreviated month, two-digit yearOctober 5 25Full month, two-digit yearOctober 10 2025Full month, four-digit year10 Sep 2025Day-first with abbreviated month10/14/2025U.S. slash format
