@@ -19,9 +19,7 @@ The source data consists of two sheets exported from Northline Outfitters' Excel
 
 ### **Issue 1 – Inconsistent Date Formats (Sales_Dump.sale_date)**
 
-The sale_date column contains at least seven distinct date formats mixed across rows. Examples found in the data:
-Raw ValueFormat10-11-2025MM-DD-YYYY (U.S. style)31/10/2025DD/MM/YYYY (Canadian/European style)Oct 17 25Abbreviated month, two-digit yearOctober 5 25Full month, two-digit yearOctober 10 2025Full month, four-digit year10 Sep 2025Day-first with abbreviated month10/14/2025U.S. slash format
-The U.S. and Canadian formats are ambiguous when the day value is 12 or less (e.g., 10/11/2025 could be October 11 or November 10 depending on convention). Since Northline ships to both the U.S. and Canada, both formats appear legitimately in the data.
+The sale_date column contains at least seven distinct date formats mixed across rows, reflecting inconsistent data entry over time. Examples found in the data include 10-11-2025 (U.S. MM-DD-YYYY), 31/10/2025 (Canadian DD/MM/YYYY), Oct 17 25 (abbreviated month with two-digit year), October 5 25 (full month with two-digit year), October 10 2025 (full month with four-digit year), 10 Sep 2025 (day-first with abbreviated month), and 10/14/2025 (U.S. slash format). Because Northline ships to both the U.S. and Canada, both MM/DD/YYYY and DD/MM/YYYY conventions appear legitimately in the data, making ambiguous values like 10/11/2025 particularly problematic — they could represent either October 11 or November 10 depending on the convention used. Without standardization, sorting, filtering, and any date-based reporting such as monthly revenue trends would be unreliable.
 
 ### **Issue 2 – Composite customer_info Field (Sales_Dump.customer_info)**
 
@@ -42,17 +40,13 @@ VISA and visa represent the same method
 Debit and debit represent the same method
 MC and Mastercard represent the same brand
 
-
 ### **Issue 4 – Mixed Discount Formats (Sales_Dump.discount)**
 
-Discounts are recorded in five distinct formats, and 32 of 200 rows (16%) have no discount value at all:
-ValueMeaning10%10 percent with symbol5%5 percent with symbol55 percent as a bare number (no symbol)promo5A promotional code representing 5% offstudent 10%Text label plus percent value0No discountNULLMissing — assumed no discount
+The discount column contains five distinct formats across the dataset, with 32 of 200 rows (16%) having no value at all. Some entries use a percent symbol (10%, 5%), others store the same value as a bare number with no symbol (5), and others use text-based codes such as promo5 or student 10% that require interpretation before they can be used in any calculation. Zero-discount rows are recorded as 0 in some cases and left NULL in others. NULL values were assumed to mean no discount was applied.
 
 ### **Issue 5 – Mixed Tax Formats (Sales_Dump.tax)**
 
-Tax is stored in at least five formats across 200 rows, and 33 rows have no tax value:
-ValueMeaning8.25%Decimal percent with symbol0.0825Decimal rate7%Percent with symbol13%Canadian HST as percentHST 13%Labeled text with rate
-The same tax rate of 13% appears as 13%, 0.13, and HST 13% in different rows.
+The tax column contains at least five distinct formats across the dataset, with 33 rows having no value at all. Some entries use a percent symbol (7%, 8.25%, 13%), others store the equivalent decimal rate (0.0825, 0.13), and others include a label alongside the value (HST 13%). The same underlying tax rate can appear in multiple forms within the same column — the Canadian HST rate of 13%, for example, appears as 13%, 0.13, and HST 13% in different rows. Without normalization, any tax calculation or comparison across rows would produce incorrect results.
 
 ### **Issue 6 – Currency Code Embedded in Price Fields (Sales_Dump.unit_price, Product_Supplier_Master.cost, list_price)**
 
@@ -105,7 +99,6 @@ Weight examples: 8 ounces, 272 grams, 0.6 pound, 0.22 kilograms, 272g, 0.30 kg
 Length examples: 11", 11 inches, 11 in, 28 cm, 38cm, 38 centimetres
 
 In Sales_Dump, size_or_weight conflates weight and size into a single field with no consistent type. 23 rows have no value.
-
 
 ## Data cleaning process: explain how you resolved the data quality issues identified previously. Include any SQL statements used to standardize, split, convert, or update the imported data.
 
