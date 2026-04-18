@@ -22,7 +22,7 @@ The sale_date column contains at least seven distinct date formats mixed across 
 Raw ValueFormat10-11-2025MM-DD-YYYY (U.S. style)31/10/2025DD/MM/YYYY (Canadian/European style)Oct 17 25Abbreviated month, two-digit yearOctober 5 25Full month, two-digit yearOctober 10 2025Full month, four-digit year10 Sep 2025Day-first with abbreviated month10/14/2025U.S. slash format
 The U.S. and Canadian formats are ambiguous when the day value is 12 or less (e.g., 10/11/2025 could be October 11 or November 10 depending on convention). Since Northline ships to both the U.S. and Canada, both formats appear legitimately in the data.
 
-Issue 2 – Composite customer_info Field (Sales_Dump.customer_info)
+**Issue 2** – Composite customer_info Field (Sales_Dump.customer_info)
 Customer details were entered as a single free-text field using at least three different delimiters (;, |, /). The field may contain the customer's name alongside notes about loyalty status, student status, and checkout type. Examples:
 
 Mason Rivera; Loyalty? Y
