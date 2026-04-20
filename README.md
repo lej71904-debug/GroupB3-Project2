@@ -5,9 +5,9 @@
 
 ## Team Members:
 1. Landon Johnson: Data Cleaner
-2. Yash Kirtane: 
-3. Chris Ennis: 
-4. Charan Nuthalapati: 
+2. Yash Kirtane: Group Leader
+3. Chris Ennis: Conceptual Modeler
+4. Charan Nuthalapati: SQL Writer
 5. Lawrence Carpenter: 
 
 ## Case summary: brief explanation of the company and data challenges.
