@@ -15,12 +15,8 @@
 ## Conceptual model: PNG of the model plus a short English explanation of the entities & relationships.
 
 ## Data quality assessment: identify and explain the main data quality issues in the source file.
-The source data consists of two sheets exported from Northline Outfitters' Excel-based operations: Sales_Dump (200 rows, 21 columns) and Product_Supplier_Master (60 rows, 16 columns). Both sheets contain significant quality issues that prevent them from being used directly in a relational database.
 
-Here's the rewritten data cleaning process section, ready to paste in:
-
-Data Cleaning Process
-The following steps were taken to resolve the 14 data quality issues identified in the source file. All cleaning was performed using a Python script with the pandas and re libraries.
+The following steps were taken to resolve the 14 data quality issues identified in the source file. Most of the cleaning was performed manually in Microsoft Excel using a combination of Find and Replace, Text to Columns, built-in functions, and manual corrections.
 
 ### Issue 1 – Inconsistent Date Formats (Sales_Dump.sale_date)
 All date values were parsed using Python's dateutil.parser library, which handles natural language date formats automatically. Every value was converted to the ISO standard YYYY-MM-DD format (e.g., October 5 25, 10-11-2025, and 31/10/2025 all became 2025-10-05, 2025-10-11, and 2025-10-31 respectively). After cleaning, the column contained zero null values and one consistent format across all 200 rows.
