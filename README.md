@@ -17,89 +17,51 @@
 ## Data quality assessment: identify and explain the main data quality issues in the source file.
 The source data consists of two sheets exported from Northline Outfitters' Excel-based operations: Sales_Dump (200 rows, 21 columns) and Product_Supplier_Master (60 rows, 16 columns). Both sheets contain significant quality issues that prevent them from being used directly in a relational database.
 
-### **Issue 1 – Inconsistent Date Formats (Sales_Dump.sale_date)**
+Here's the rewritten data cleaning process section, ready to paste in:
 
-The sale_date column contains at least seven distinct date formats mixed across rows, reflecting inconsistent data entry over time. Examples found in the data include 10-11-2025 (U.S. MM-DD-YYYY), 31/10/2025 (Canadian DD/MM/YYYY), Oct 17 25 (abbreviated month with two-digit year), October 5 25 (full month with two-digit year), October 10 2025 (full month with four-digit year), 10 Sep 2025 (day-first with abbreviated month), and 10/14/2025 (U.S. slash format). Because Northline ships to both the U.S. and Canada, both MM/DD/YYYY and DD/MM/YYYY conventions appear legitimately in the data, making ambiguous values like 10/11/2025 particularly problematic — they could represent either October 11 or November 10 depending on the convention used. Without standardization, sorting, filtering, and any date-based reporting such as monthly revenue trends would be unreliable.
+Data Cleaning Process
+The following steps were taken to resolve the 14 data quality issues identified in the source file. All cleaning was performed using a Python script with the pandas and re libraries.
 
-### **Issue 2 – Composite customer_info Field (Sales_Dump.customer_info)**
+### Issue 1 – Inconsistent Date Formats (Sales_Dump.sale_date)
+All date values were parsed using Python's dateutil.parser library, which handles natural language date formats automatically. Every value was converted to the ISO standard YYYY-MM-DD format (e.g., October 5 25, 10-11-2025, and 31/10/2025 all became 2025-10-05, 2025-10-11, and 2025-10-31 respectively). After cleaning, the column contained zero null values and one consistent format across all 200 rows.
 
-Customer details were entered as a single free-text field using at least three different delimiters (;, |, /). The field may contain the customer's name alongside notes about loyalty status, student status, and checkout type. Examples:
+### Issue 2 – Composite customer_info Field (Sales_Dump.customer_info)
+The single customer_info field was split into four separate columns using Python string parsing. The script detected whichever delimiter was present in each row (semicolon, pipe, or forward slash) and extracted the relevant pieces. The four new columns are: customer_name (the customer's full name), loyalty_flag (Y if loyalty was noted, N otherwise), student_flag (Y if student was noted, N otherwise), and checkout_type (guest if a guest checkout was noted, blank otherwise). The original customer_info column was then dropped.
 
-Mason Rivera; Loyalty? Y
-Grace Hall | Student | US
-Zoe Garcia / guest order
-Noah Smith | Student | CA
+### Issue 3 – Inconsistent Payment Method Values (Sales_Dump.payment_method)
+All payment method values were standardized to a consistent title case format using a lookup map. Specifically: VISA and visa became Visa, MC became Mastercard, DEBIT and debit became Debit, CASH became Cash, and AMEX, Apple Pay, and Interac were normalized similarly. After cleaning, all 200 rows contain one of 7 consistent values with no nulls.
 
-Additionally, the same customer appears with multiple different email addresses across orders (e.g., Emma Wilson has 5 distinct email addresses on file, Grace Hall has 3). There is no stable customer ID.
+### Issue 4 – Mixed Discount Formats (Sales_Dump.discount)
+All discount values were converted to a uniform decimal format representing the discount rate (e.g., 0.10 for a 10% discount). The cleaning script used a regular expression to extract the numeric value from any format — whether it was a bare number (5), a percentage (10%), or a text code (promo5, student 10%). Any value greater than 1 was divided by 100 to convert it to a decimal. Null values and blanks were treated as no discount and filled with 0.0.
 
-### **Issue 3 – Inconsistent Payment Method Values (Sales_Dump.payment_method)**
+### Issue 5 – Mixed Tax Formats (Sales_Dump.tax)
+All tax values were converted to a uniform decimal format using the same approach as discounts — a regular expression extracted the numeric portion from formats like 13%, HST 13%, and 0.13, and values greater than 1 were divided by 100. The 33 rows with no tax value were left as NULL rather than filled with zero, because a missing tax entry means the rate is unknown, which is different from a tax-exempt order.
 
-The same payment types appear in different cases and abbreviations:
+### Issue 6 – Currency Code Embedded in Price Fields (Sales_Dump.unit_price, Product_Supplier_Master.cost, list_price)
+In Sales_Dump, the unit_price column was split into two new columns: unit_price_amount (numeric) and unit_price_currency (USD or CAD), by stripping the currency prefix using a regular expression. The same approach was applied to the cost and list_price columns in Product_Supplier_Master, creating cost_amount, cost_currency, list_price_amount, and list_price_currency. The 5 rows in Product_Supplier_Master where the currency prefix was missing were recovered using the SKU prefix — SKUs containing -C- were assigned CAD and SKUs containing -U- were assigned USD.
 
-VISA and visa represent the same method
-Debit and debit represent the same method
-MC and Mastercard represent the same brand
+### Issue 7 – Missing and Prefixed line_total Values (Sales_Dump.line_total)
+Dollar sign prefixes were stripped from all line_total values and the column was converted to a numeric type. The 62 rows with a missing line_total were then recalculated using the formula: unit_price_amount × quantity × (1 − discount) × (1 + tax). For rows where tax was NULL, a tax value of 0 was assumed for the calculation only. After cleaning, all 200 rows have a numeric line_total value.
 
-### **Issue 4 – Mixed Discount Formats (Sales_Dump.discount)**
+### Issue 8 – Inconsistent Country Values (Sales_Dump.ship_country)
+All country values were standardized to a two-letter code: US and USA both became US, and CA and Canada both became CA. The 3 rows with a missing ship_country were recovered by reading the order_id prefix — orders beginning with UORD- were assigned US and orders beginning with CORD- were assigned CA. After cleaning, all 200 rows contain either US or CA with no nulls.
 
-The discount column contains five distinct formats across the dataset, with 32 of 200 rows (16%) having no value at all. Some entries use a percent symbol (10%, 5%), others store the same value as a bare number with no symbol (5), and others use text-based codes such as promo5 or student 10% that require interpretation before they can be used in any calculation. Zero-discount rows are recorded as 0 in some cases and left NULL in others. NULL values were assumed to mean no discount was applied.
+### Issue 9 – Student Flag Embedded in Category (Sales_Dump.category, Product_Supplier_Master.category)
+In Sales_Dump, any category value containing a student annotation (e.g., Tech / Student, School / Student) was split so that the base category was kept in the category column and the student indicator was merged into the student_flag column already created in Issue 2. In Product_Supplier_Master, the same stripping was applied and additional inconsistencies were corrected — wrong separators (Lifestyle , Student), alternate connectors (Tech & Student), typos (Student and apparels), and self-referential entries (Accessories / Accessories) were all normalized. After cleaning, both sheets contain exactly 7 clean base categories: Accessories, Apparel, Audio, Desk Setup, Lifestyle, School, and Tech.
 
-### **Issue 5 – Mixed Tax Formats (Sales_Dump.tax)**
+### Issue 10 – SKU Case Inconsistency (Both Sheets)
+All SKU values in both sheets were converted to uppercase using a simple string operation. This ensures that joins between the Sales_Dump and Product_Supplier_Master sheets on the SKU column will work correctly.
 
-The tax column contains at least five distinct formats across the dataset, with 33 rows having no value at all. Some entries use a percent symbol (7%, 8.25%, 13%), others store the equivalent decimal rate (0.0825, 0.13), and others include a label alongside the value (HST 13%). The same underlying tax rate can appear in multiple forms within the same column — the Canadian HST rate of 13%, for example, appears as 13%, 0.13, and HST 13% in different rows. Without normalization, any tax calculation or comparison across rows would produce incorrect results.
+### Issue 11 – Duplicate and Variant Rows in Product_Supplier_Master
+After normalizing SKU case and product descriptions, exact duplicate rows (same SKU and same product description) were removed using pandas drop_duplicates. The remaining 53 rows represent legitimate distinct entries — base products, color or size variants, and student edition variants. Variant rows were linked back to their base product using the parent_sku column, which was already present in the source data.
 
-### **Issue 6 – Currency Code Embedded in Price Fields (Sales_Dump.unit_price, Product_Supplier_Master.cost, list_price)**
+### Issue 12 – Vendor Name Inconsistencies (Product_Supplier_Master.vendor_name)
+Urban Sources was corrected to Urban Source to match the consistent vendor name used elsewhere. All vendor phone numbers were reformatted to a standard XXX-XXX-XXXX format by stripping all non-numeric characters and re-inserting dashes. The annotation / email missing that appeared in some vendor_rep entries was stripped out, leaving only the representative's name.
 
-Unit prices in Sales_Dump are stored as strings with the currency code as a prefix (e.g., USD 18.99, CAD 46.99), making the column non-numeric. In Product_Supplier_Master, cost and list_price are inconsistent — some rows have the currency prefix and others are bare numeric values (e.g., 31.4, 27.8, 21.75), with no currency indicated.
+### Issue 13 – reorder_level Contains Text (Product_Supplier_Master.reorder_level)
+The word ten was replaced with the integer 10. All values were then converted to integers. The 6 rows with no reorder_level were left as NULL because the correct reorder point for those products is unknown and should not be guessed.
 
-### **Issue 7 – Missing and Prefixed line_total Values (Sales_Dump.line_total)**
+### Issue 14 – Mixed Units in size_or_weight, weight, and length
+In Sales_Dump, the single size_or_weight column was split into three new columns. Items recorded as a weight (ounces, grams, pounds, kilograms) were converted to grams and stored in weight_g. Items recorded as a length (inches, centimeters) were converted to centimeters and stored in length_cm. Items recorded as one size were given a value of Y in a new one_size_flag column, with all other rows filled as N. The original size_or_weight column was dropped. The same unit conversion was applied to the weight and length columns in Product_Supplier_Master, replacing the free-text fields with numeric weight_g and length_cm columns.
 
-62 of 200 rows (31%) have a NULL line_total. Among the rows that do have a value, some include a $ prefix (e.g., $19.43, $64.78) while others are plain numeric strings (e.g., 97.19, 161.97). The column is stored as text rather than a numeric type.
-
-### **Issue 8 – Inconsistent Country Values (Sales_Dump.ship_country)**
-
-Four distinct strings represent what should be only two countries, and 3 rows have no value at all:
-US and USA → United States
-CA and Canada → Canada
-3 NULL rows
-
-The order_id column encodes the country in its prefix (UORD- = U.S. order, CORD- = Canada order), which can be used to recover the 3 missing values.
-
-### **Issue 9 – Student Flag Embedded in Category (Sales_Dump.category, Product_Supplier_Master.category)**
-
-In Sales_Dump, category values like Tech / Student and Accessories / Student blend the actual product category with a student-discount flag. The 14 distinct values in Sales_Dump reduce to 7 base categories once the student annotation is stripped.
-In Product_Supplier_Master the problem is worse — 20 distinct category strings exist due to additional inconsistencies including wrong separators (Lifestyle , Student), different connector words (Tech & Student), typos (Student and apparels), and self-referential entries (Accessories / Accessories).
-
-### **Issue 10 – SKU Case Inconsistency (Both Sheets)**
-
-The same product SKU appears in both uppercase and lowercase across rows in both sheets. For example, SKU-C-1012 and sku-c-1012 refer to the same product. This breaks any join between Sales_Dump and Product_Supplier_Master.
-
-### **Issue 11 – Duplicate and Variant Rows in Product_Supplier_Master**
-
-The Product_Supplier_Master sheet has 60 rows but only 20 distinct base products. The rows fall into three patterns:
-
-True duplicates — same SKU (after case normalization), same product, with minor field differences (e.g., conflicting discontinued flag, phone format variants for the same vendor)
-Color/size variants — a product like "Commuter Backpack / Black" shares the same base SKU number as "Commuter Backpack" but is a distinct item
-Student edition variants — a product like "Commuter Backpack Student Edition" is a separate offering under the same base SKU
-
-
-### **Issue 12 – Vendor Name Inconsistencies (Product_Supplier_Master.vendor_name)**
-
-Urban Source and Urban Sources appear as two distinct vendor names but are clearly the same supplier (same phone number, same rep). Phone numbers for the same vendor are also formatted inconsistently: 404-555-0181, (404)555-0181. Vendor rep entries sometimes append / email missing as a note directly in the name field (e.g., Jason Wu / email missing).
-
-### **Issue 13 – reorder_level Contains Text (Product_Supplier_Master.reorder_level)**
-
-Most reorder level values are integers (5, 10, 12, 15) but some rows contain the word 'ten' instead of the number 10. 6 rows have no value.
-
-### **Issue 14 – Mixed Units in size_or_weight, weight, and length**
-
-Weight and size information in both sheets is stored as free text in a mixture of imperial and metric units:
-
-Weight examples: 8 ounces, 272 grams, 0.6 pound, 0.22 kilograms, 272g, 0.30 kg
-Length examples: 11", 11 inches, 11 in, 28 cm, 38cm, 38 centimetres
-
-In Sales_Dump, size_or_weight conflates weight and size into a single field with no consistent type. 23 rows have no value.
-
-## Data cleaning process: explain how you resolved the data quality issues identified previously. Include any SQL statements used to standardize, split, convert, or update the imported data.
-
-## Queries: provide answers for 3 required queries and 3 additional queries designed by your group
+Queries: provide answers for 3 required queries and 3 additional queries designed by your group
