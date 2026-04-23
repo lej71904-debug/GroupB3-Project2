@@ -114,26 +114,26 @@ In Sales_Dump the size_or_weight column was split into three new columns. Weight
 
 ## Queries:
 
-## Required Query 1 — Which products generated the highest total sales revenue, by country?
+### Required Query 1 — Which products generated the highest total sales revenue, by country?
 <img width="753" height="771" alt="image" src="https://github.com/user-attachments/assets/d785651d-e4d4-4d13-8cd8-ac2f99de9a07" />
 
-## Required Query 2 — Which employees handled the largest number of orders, and how do their results compare with other employees under the same manager?
+### Required Query 2 — Which employees handled the largest number of orders, and how do their results compare with other employees under the same manager?
 <img width="997" height="737" alt="image" src="https://github.com/user-attachments/assets/b1489c5a-21e5-4bcc-a2ad-48f15a2d0e26" />
 
-## Required Query 3 — Which vendors supply products that appear in more than one category?
+### Required Query 3 — Which vendors supply products that appear in more than one category?
 <img width="973" height="602" alt="image" src="https://github.com/user-attachments/assets/c628c3c6-f73e-4422-b4a4-e0222e70883b" />
 
-## Additional Query 1 — Which customers have the highest lifetime spending and are they loyalty members?
+### Additional Query 1 — Which customers have the highest lifetime spending and are they loyalty members?
 Business justification: Identifying top spending customers helps Northline target their loyalty program more effectively and decide which customers to prioritize for promotions and retention efforts.
 
 <img width="917" height="747" alt="image" src="https://github.com/user-attachments/assets/908b074a-3a94-4673-8b2d-d91a95c678c8" />
 
-## Additional Query 2 — Which products have the highest return rates?
+### Additional Query 2 — Which products have the highest return rates?
 Business justification: Understanding which products are being returned most frequently helps Northline identify potential quality issues, misleading product descriptions, or sizing problems that could be costing the business money.
 
 <img width="1048" height="761" alt="image" src="https://github.com/user-attachments/assets/d9ee87ec-fa35-4b60-9eae-08aecdc1094f" />
 
-## Additional Query 3 — Which product categories generate the most revenue from student customers compared to non-student customers?
+### Additional Query 3 — Which product categories generate the most revenue from student customers compared to non-student customers?
 Business justification: Since Northline targets student customers with special discounts, this query helps the business understand which categories are most popular among students versus regular customers, which can guide future product selection and marketing decisions.
 
 <img width="972" height="705" alt="image" src="https://github.com/user-attachments/assets/2f62d076-cac0-4bbf-ab88-2698c7199923" />
