@@ -107,7 +107,8 @@ Find and Replace was used to correct Urban Sources to Urban Source. All vendor p
 ### Issue 13 – reorder_level Contains Text (Product_Supplier_Master.reorder_level)
 Find and Replace was used to replace the word ten with the number 10. The column was then formatted as a number. The 6 rows with no reorder_level were left as NULL because the correct reorder point is unknown.
 
-## Queries:
-
 ### Issue 14 – Mixed Units in size_or_weight, weight, and length
 In Sales_Dump the size_or_weight column was split into three new columns. Weight values were converted to grams using Excel formulas and stored in weight_g. Length values were converted to centimeters and stored in length_cm. Rows with a one size note were marked Y in a new one_size_flag column with all remaining rows filled as N. The original size_or_weight column was deleted. The same unit conversion formulas were applied to the weight and length columns in Product_Supplier_Master.
+
+## Queries:
+
