@@ -10,15 +10,15 @@
 4. Charan Nuthalapati: SQL Writer
 5. Lawrence Carpenter: Data Quality
 
-## Case summary: brief explanation of the company and data challenges.
+## Case Summary:
 
 Northline Outfitters is a small online retailer selling student-friendly lifestyle and tech accessories to customers in the United States and Canada. The company sources products from outside vendors and currently manages all records in Excel rather than a proper database.
 The data presented significant challenges including inconsistent date and price formats, customer information stored in a single text field, mixed discount and tax formats, duplicate product rows, SKU capitalization inconsistencies, and measurements recorded in a mix of imperial and metric units. These issues required extensive cleaning and restructuring before the data could be loaded into a relational database.
 
-## Conceptual model: PNG of the model plus a short English explanation of the entities & relationships.
+## Conceptual Model:
 <img width="797" height="796" alt="4610_project2_datamodel" src="https://github.com/user-attachments/assets/fea16c65-9da0-4628-a90e-d7634c0de087" />
 
-## Data quality assessment: identify and explain the main data quality issues in the source file.
+## Data Quality Assessment
 
 The source data consists of two sheets exported from Northline Outfitters' Excel-based operations: Sales_Dump (200 rows, 21 columns) and Product_Supplier_Master (60 rows, 16 columns). Both sheets contain significant quality issues that prevent them from being used directly in a relational database.
 
@@ -64,7 +64,7 @@ Most reorder level values are integers but some rows contain the word ten instea
 ### Issue 14 – Mixed Units in size_or_weight, weight, and length
 Weight and size information in both sheets is stored as free text in a mixture of imperial and metric units. In Sales_Dump, size_or_weight conflates weight and size into a single field with no consistent type and 23 rows have no value.
 
-## Data Cleaning Proccess
+## Data Cleaning Proccess:
 
 All data cleaning was performed manually in Microsoft Excel prior to importing the data into the database. No SQL cleaning statements were required.
 
@@ -106,6 +106,8 @@ Find and Replace was used to correct Urban Sources to Urban Source. All vendor p
 
 ### Issue 13 – reorder_level Contains Text (Product_Supplier_Master.reorder_level)
 Find and Replace was used to replace the word ten with the number 10. The column was then formatted as a number. The 6 rows with no reorder_level were left as NULL because the correct reorder point is unknown.
+
+## Queries:
 
 ### Issue 14 – Mixed Units in size_or_weight, weight, and length
 In Sales_Dump the size_or_weight column was split into three new columns. Weight values were converted to grams using Excel formulas and stored in weight_g. Length values were converted to centimeters and stored in length_cm. Rows with a one size note were marked Y in a new one_size_flag column with all remaining rows filled as N. The original size_or_weight column was deleted. The same unit conversion formulas were applied to the weight and length columns in Product_Supplier_Master.
