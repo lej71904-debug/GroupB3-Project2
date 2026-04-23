@@ -134,3 +134,8 @@ Business justification: Understanding which products are being returned most fre
 ## Additional Query 3 — Which product categories generate the most revenue from student customers compared to non-student customers?
 Business justification: Since Northline targets student customers with special discounts, this query helps the business understand which categories are most popular among students versus regular customers, which can guide future product selection and marketing decisions.
 <img width="972" height="705" alt="image" src="https://github.com/user-attachments/assets/2f62d076-cac0-4bbf-ab88-2698c7199923" />
+
+## Database Information:
+Name of the database: mb_B3
+
+Additional information: Each query listed above is marked in the database using stored procedures which can be called using the following format: CALL GP2_Q1(); (For Query 1), CALL GP2_Q2(); (For Query 2), etc.
