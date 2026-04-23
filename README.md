@@ -63,3 +63,49 @@ Most reorder level values are integers but some rows contain the word ten instea
 
 ### Issue 14 – Mixed Units in size_or_weight, weight, and length
 Weight and size information in both sheets is stored as free text in a mixture of imperial and metric units. In Sales_Dump, size_or_weight conflates weight and size into a single field with no consistent type and 23 rows have no value.
+
+## Data Cleaning Proccess
+
+All data cleaning was performed manually in Microsoft Excel prior to importing the data into the database. No SQL cleaning statements were required.
+
+### Issue 1 – Inconsistent Date Formats (Sales_Dump.sale_date)
+All date values were manually reviewed and reformatted to the ISO standard YYYY-MM-DD format. Excel's Find and Replace was used to standardize common patterns, and remaining edge cases such as abbreviated month names and two-digit years were corrected by hand. After cleaning, the column contained zero null values and one consistent format across all 200 rows.
+
+### Issue 2 – Composite customer_info Field (Sales_Dump.customer_info)
+The single customer_info field was split into four separate columns using Excel's Text to Columns feature, applied once for each delimiter type. The extracted pieces were organized into four new columns: customer_name, loyalty_flag, student_flag, and checkout_type. The original customer_info column was then deleted.
+
+### Issue 3 – Inconsistent Payment Method Values (Sales_Dump.payment_method)
+All payment method values were standardized using Find and Replace. VISA and visa were replaced with Visa, MC was replaced with Mastercard, DEBIT and debit were replaced with Debit, and CASH was replaced with Cash. After cleaning all 200 rows contain one of 7 consistent values with no nulls.
+
+### Issue 4 – Mixed Discount Formats (Sales_Dump.discount)
+All discount values were converted to a uniform decimal format representing the discount rate. Find and Replace was used to remove percent symbols and text prefixes such as promo and student. Excel formulas were then written to divide any remaining whole number values by 100 to produce the correct decimal. Null values and blanks were treated as no discount and filled with 0.
+
+### Issue 5 – Mixed Tax Formats (Sales_Dump.tax)
+All tax values were converted to a uniform decimal format using the same approach as discounts. Find and Replace was used to remove labels such as HST and percent symbols, and Excel formulas were used to convert percentage values greater than 1 to their decimal equivalent by dividing by 100. The 33 rows with no tax value were left as NULL because a missing tax entry means the rate is unknown, which is different from a tax-exempt order.
+
+### Issue 6 – Currency Code Embedded in Price Fields (Sales_Dump.unit_price, Product_Supplier_Master.cost, list_price)
+In Sales_Dump the unit_price column was split into two new columns, unit_price_amount and unit_price_currency, by using Text to Columns with a space delimiter. The same approach was applied to cost and list_price in Product_Supplier_Master. The 5 rows where the currency was missing were filled in manually by checking the SKU prefix — SKUs containing -C- were assigned CAD and SKUs containing -U- were assigned USD.
+
+### Issue 7 – Missing and Prefixed line_total Values (Sales_Dump.line_total)
+Find and Replace was used to remove the dollar sign prefix from all line_total values and the column was formatted as a number. For the 62 rows with a missing line_total an Excel formula was written to calculate the correct value using unit_price_amount multiplied by quantity multiplied by (1 minus discount) multiplied by (1 plus tax). After cleaning all 200 rows have a numeric line_total value.
+
+### Issue 8 – Inconsistent Country Values (Sales_Dump.ship_country)
+Find and Replace was used to standardize all country values — USA was replaced with US and Canada was replaced with CA. The 3 rows with a missing ship_country were filled in manually by checking the order_id prefix.
+
+### Issue 9 – Student Flag Embedded in Category (Sales_Dump.category, Product_Supplier_Master.category)
+In Sales_Dump, Find and Replace was used to remove student annotations from category values leaving only the base category name. The student indicator was recorded in the student_flag column. In Product_Supplier_Master the same stripping was applied and additional inconsistencies were corrected manually. After cleaning both sheets contain exactly 7 clean base categories: Accessories, Apparel, Audio, Desk Setup, Lifestyle, School, and Tech.
+
+### Issue 10 – SKU Case Inconsistency (Both Sheets)
+Excel's UPPER() function was applied to the SKU column in both sheets to convert all values to uppercase. The formula results were then pasted as values to replace the original column.
+
+### Issue 11 – Duplicate and Variant Rows in Product_Supplier_Master
+Excel's built-in Remove Duplicates feature was used to identify and remove exact duplicate rows based on the SKU and product description columns. The remaining 53 rows represent legitimate distinct entries. Variant rows were already linked to their base product via the parent_sku column.
+
+### Issue 12 – Vendor Name Inconsistencies (Product_Supplier_Master.vendor_name)
+Find and Replace was used to correct Urban Sources to Urban Source. All vendor phone numbers were manually reformatted to a standard XXX-XXX-XXXX format. The annotation / email missing was removed from vendor_rep entries using Find and Replace.
+
+### Issue 13 – reorder_level Contains Text (Product_Supplier_Master.reorder_level)
+Find and Replace was used to replace the word ten with the number 10. The column was then formatted as a number. The 6 rows with no reorder_level were left as NULL because the correct reorder point is unknown.
+
+### Issue 14 – Mixed Units in size_or_weight, weight, and length
+In Sales_Dump the size_or_weight column was split into three new columns. Weight values were converted to grams using Excel formulas and stored in weight_g. Length values were converted to centimeters and stored in length_cm. Rows with a one size note were marked Y in a new one_size_flag column with all remaining rows filled as N. The original size_or_weight column was deleted. The same unit conversion formulas were applied to the weight and length columns in Product_Supplier_Master.
