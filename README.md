@@ -13,6 +13,7 @@
 ## Case summary: brief explanation of the company and data challenges.
 
 ## Conceptual model: PNG of the model plus a short English explanation of the entities & relationships.
+<img width="797" height="796" alt="4610_project2_datamodel" src="https://github.com/user-attachments/assets/fea16c65-9da0-4628-a90e-d7634c0de087" />
 
 ## Data quality assessment: identify and explain the main data quality issues in the source file.
 
