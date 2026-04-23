@@ -125,14 +125,17 @@ In Sales_Dump the size_or_weight column was split into three new columns. Weight
 
 ## Additional Query 1 — Which customers have the highest lifetime spending and are they loyalty members?
 Business justification: Identifying top spending customers helps Northline target their loyalty program more effectively and decide which customers to prioritize for promotions and retention efforts.
+
 <img width="917" height="747" alt="image" src="https://github.com/user-attachments/assets/908b074a-3a94-4673-8b2d-d91a95c678c8" />
 
 ## Additional Query 2 — Which products have the highest return rates?
 Business justification: Understanding which products are being returned most frequently helps Northline identify potential quality issues, misleading product descriptions, or sizing problems that could be costing the business money.
+
 <img width="1048" height="761" alt="image" src="https://github.com/user-attachments/assets/d9ee87ec-fa35-4b60-9eae-08aecdc1094f" />
 
 ## Additional Query 3 — Which product categories generate the most revenue from student customers compared to non-student customers?
 Business justification: Since Northline targets student customers with special discounts, this query helps the business understand which categories are most popular among students versus regular customers, which can guide future product selection and marketing decisions.
+
 <img width="972" height="705" alt="image" src="https://github.com/user-attachments/assets/2f62d076-cac0-4bbf-ab88-2698c7199923" />
 
 ## Database Information:
