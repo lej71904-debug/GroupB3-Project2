@@ -8,7 +8,7 @@
 2. Yash Kirtane: Group Leader
 3. Chris Ennis: Conceptual Modeler
 4. Charan Nuthalapati: SQL Writer
-5. Lawrence Carpenter: 
+5. Lawrence Carpenter: Data Quality
 
 ## Case summary: brief explanation of the company and data challenges.
 
