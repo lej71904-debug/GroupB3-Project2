@@ -12,6 +12,9 @@
 
 ## Case summary: brief explanation of the company and data challenges.
 
+Northline Outfitters is a small online retailer selling student-friendly lifestyle and tech accessories to customers in the United States and Canada. The company sources products from outside vendors and currently manages all records in Excel rather than a proper database.
+The data presented significant challenges including inconsistent date and price formats, customer information stored in a single text field, mixed discount and tax formats, duplicate product rows, SKU capitalization inconsistencies, and measurements recorded in a mix of imperial and metric units. These issues required extensive cleaning and restructuring before the data could be loaded into a relational database.
+
 ## Conceptual model: PNG of the model plus a short English explanation of the entities & relationships.
 <img width="797" height="796" alt="4610_project2_datamodel" src="https://github.com/user-attachments/assets/fea16c65-9da0-4628-a90e-d7634c0de087" />
 
